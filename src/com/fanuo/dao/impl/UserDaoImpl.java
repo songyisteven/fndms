@@ -41,7 +41,7 @@ public class UserDaoImpl extends EnhancedHibernateDaoSupport<User> implements Us
 	 */
 	@Override
 	public User getUser(String userName) {
-		return super.getUniqueEntityByOneProperty("userName", userName);
+		return super.getUniqueEntityByOneProperty("username", userName);
 	}
 
 

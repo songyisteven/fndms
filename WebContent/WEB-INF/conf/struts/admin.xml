@@ -26,7 +26,7 @@
 		<default-interceptor-ref name="adminStack" />
 		<global-results>
 			<result name="info">/WEB-INF/jsps/admin/info.jsp</result>
-			<result name="login">/WEB-INF/login/login.jsp</result>
+			<result name="login">/login.jsp</result>
 			<result name="runtimeException">/WEB-INF/jsps/admin/error.jsp</result>
 			<result name="adminException">/WEB-INF/jsps/admin/error500.jsp</result>
 		</global-results>
@@ -43,7 +43,7 @@
 			<interceptor-ref name="adminStack"></interceptor-ref>
 			<!-- 后台首页 -->
 			<result name="success">/WEB-INF/jsps/admin/adminIndex.jsp</result>
-			<result name="login">/WEB-INF/login/login.jsp</result>
+			<result name="login">/login.jsp</result>
 		</action>
 		
 		 <!-- 

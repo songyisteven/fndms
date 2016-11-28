@@ -40,6 +40,7 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
+	
 	public String getUsername() {
 		return username;
 	}
