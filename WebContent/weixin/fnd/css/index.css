@@ -1,0 +1,71 @@
+/* CSS Document */
+
+.search {
+    min-height: 5rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e1e1e1;
+}
+.search .search_icon {
+    text-align: center;
+    width: 25%;
+}
+.search .search_icon span {
+    margin: 0 auto;
+    height: 5rem;
+    width: 100%;
+    display: block;
+    background: url('../images/search_icon.png') no-repeat center;
+    background-size: 50%;
+}
+.search .form_options{
+    margin: 1.25rem 0 0 0;
+    width: 75%;
+}
+.search .form_options input {
+    height: 2.25rem;
+    line-height: 1.25rem;
+    border: 1px solid #e1e1e1;
+    border-right: none;
+    font-size: 0.8rem;
+    border-radius: 3px 0 0 3px;
+    text-indent: 20px;
+}
+.search .form_options button {
+    height: 2.25rem;
+    line-height: 2.25rem;
+    border: 1px solid #f3d5f5;
+    border-radius: 0 3px 3px 0;
+    color: #7e147e;
+    font-size: 0.875rem;
+    background: #f3d5f5;
+}
+.search .form_options button i {
+	margin-right:5px;
+    font-size: 0.875rem;
+}
+/**************/
+#divlist a{
+	margin-top:10px;
+	display:block;
+}
+#divlist a:first-child{
+	margin-top:0;
+}
+.more_disease{
+    margin:20px auto 20px auto;
+    padding:8px 16px;
+    background: #f3d5f5;
+    color: #db99df;
+    display: table;
+    border-radius: 5px;
+}
+.more_disease a{
+    color: #7e147e;
+    font-size: 0.875rem;
+}
+.more_disease a i{
+    font-size: 0.875rem;
+}
+#s_box{
+	display: none;
+}

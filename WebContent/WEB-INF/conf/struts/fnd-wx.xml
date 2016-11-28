@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<!-- Add packages here -->
+	<package name="fnd" namespace="/fnd" extends="struts-default">
+		<interceptors>
+			<interceptor-stack name="myStack">
+				<interceptor-ref name="defaultStack" />
+				<interceptor-ref name="fileUpload">
+					<param name="allowedTypes">image/bmp,image/jpg,image/png,image/gif,image/jpeg,image/JPG,image/JPEG,image/pjpeg</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="myStack" />
+
+		<global-results>
+			<result name="error">/defaultError.jsp</result>
+			<result name="statusError">/statusError.jsp</result>
+		</global-results>
+
+		<!-- 首页 -->
+		<action name="index_*" class="fndIndexAction" method="{1}">
+		<result name="index">/weixin/fnd/fnd-index.jsp</result>
+		</action>
+		
+		
+				
+		<action name="wx_*" class="fndWxAction" method="{1}">
+		</action>
+
+	</package>
+</struts>

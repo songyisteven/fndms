@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="admin" namespace="/admin" extends="struts-default">
+		<interceptors>
+			<interceptor name="adminAuth" class="com.fanuo.session.interceptors.AdminSessionInterceptor">
+				<param name="excludeMethods">login</param>
+			</interceptor>
+			
+			<interceptor-stack name="adminStack">
+				<interceptor-ref name="adminAuth" />
+				<interceptor-ref name="defaultStack" />
+				<!-- 异常堆栈日志记录，便于开发时使用，后期需要对异常统一处理 -->
+				<interceptor-ref name="exception">
+                  <param name="logEnabled">true</param>
+                  <param name="logLevel">info</param>             
+              	</interceptor-ref>
+				<interceptor-ref name="fileUpload">
+					<param name="allowedTypes">image/bmp,image/jpg,image/png,image/gif,image/jpeg,image/JPG,image/JPEG,image/pjpeg</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="adminStack" />
+		<global-results>
+			<result name="info">/WEB-INF/jsps/admin/info.jsp</result>
+			<result name="login">/WEB-INF/login/login.jsp</result>
+			<result name="runtimeException">/WEB-INF/jsps/admin/error.jsp</result>
+			<result name="adminException">/WEB-INF/jsps/admin/error500.jsp</result>
+		</global-results>
+		
+		<global-exception-mappings>
+			<exception-mapping result="runtimeException" exception="com.base.exception.CupidRuntimeException">
+			</exception-mapping>
+			<exception-mapping result="adminException" exception="java.lang.Exception">
+			</exception-mapping>
+		</global-exception-mappings>
+		
+		<!-- 后台管理功能的通用action -->
+		<action name="admin_*" class="AdminAction" method="{1}">
+			<interceptor-ref name="adminStack"></interceptor-ref>
+			<!-- 后台首页 -->
+			<result name="success">/WEB-INF/jsps/admin/adminIndex.jsp</result>
+			<result name="login">/WEB-INF/login/login.jsp</result>
+		</action>
+		
+		 <!-- 
+		<action name="chart_*" class="ChartAction" method="{1}">
+			<interceptor-ref name="adminStack"></interceptor-ref>
+			<result name="ok">/WEB-INF/jsps/admin/chart/{1}.jsp</result>
+		</action>
+		-->
+		<!-- 
+		<action name="sec_*" class="SecurityAction" method="{1}">
+			<interceptor-ref name="adminStack"></interceptor-ref>
+			<result name="ok" type="redirectAction">sec_roleManager</result>
+			<result name="roleManager">/WEB-INF/jsps/admin/security/roleManager.jsp</result>
+			<result name="addRole">/WEB-INF/jsps/admin/security/addRole.jsp</result>
+			<result name="backUp">/WEB-INF/jsps/admin/backUp.jsp</result>
+			<result name="sysconfig">/WEB-INF/jsps/admin/sysConfig.jsp</result>
+		</action>
+		-->
+	</package>
+	
+</struts>
