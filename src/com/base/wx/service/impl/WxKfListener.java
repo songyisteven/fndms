@@ -5,9 +5,13 @@ package com.base.wx.service.impl;
 
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.base.wx.constants.WeixinConstants;
+import com.base.wx.service.def.IWeiXinService;
 import com.base.wx.service.def.WeiXinListener;
 
 /**
@@ -17,7 +21,15 @@ import com.base.wx.service.def.WeiXinListener;
  */
 public class WxKfListener implements WeiXinListener {
 
-
+	@Autowired
+	private IWeiXinService weixinService;
+	
+	@PostConstruct
+	public void init(){
+		weixinService.addWeiXinListener(this);
+	}
+	
+	
 	@Override
 	public void onMessage(Map<String, String> message, HttpServletResponse servletResponse) {
 

@@ -6,6 +6,7 @@ package com.base.wx.service.impl;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
@@ -28,6 +29,12 @@ public class WxAutoReplyListener implements WeiXinListener {
 	private static Logger logger = LogUtil.getLogger(WxAutoReplyListener.class.getName());
 	@Autowired
 	private IWeiXinService weixinService;
+	
+	
+	@PostConstruct
+	public void init(){
+		weixinService.addWeiXinListener(this);
+	}
 
 	/*
 	 * (non-Javadoc)
