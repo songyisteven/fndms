@@ -1,5 +1,7 @@
 package com.base.wx.service.def;
 
+import java.util.List;
+
 /**
  * 微信用户相关的service
  * 
@@ -8,6 +10,22 @@ package com.base.wx.service.def;
  * @since cupid 1.0
  */
 public interface IWeiXinService {
+	
+	/**
+	 * 添加微信消息监听器
+	 * @param weiXinListener
+	 */
+	public void addWeiXinListener(WeiXinListener weiXinListener);
+	
+	/**
+	 * 删除微信消息监听器
+	 * @param weiXinListener
+	 */
+	public void removeWeiXinListener(WeiXinListener weiXinListener);
+	
+	
+	
+	public List<WeiXinListener> getAllWeiXinListeners();
 
 	/**
 	 * 解析普通消息，返回的是微信平台的消息格式XML

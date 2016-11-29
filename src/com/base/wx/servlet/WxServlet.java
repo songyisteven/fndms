@@ -3,10 +3,12 @@
  */
 package com.base.wx.servlet;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,16 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 
 import com.base.ServerBeanFactory;
 import com.base.log.LogUtil;
-import com.base.util.WeiXinUtil;
 import com.base.util.WeixinMessageDigestUtil;
-import com.base.wx.constants.WeixinConstants;
 import com.base.wx.service.def.IWeiXinService;
+import com.base.wx.service.def.WeiXinListener;
 
 /**
  * @author tao
@@ -34,13 +34,63 @@ import com.base.wx.service.def.IWeiXinService;
 public class WxServlet extends HttpServlet {
 	private static final long serialVersionUID = 2148447682092966772L;
 	private static final String TOKEN = "Lvze2015";
-	private Logger logger = LogUtil.getLogger(WxServlet.class.getSimpleName());
+	private static final Logger logger = LogUtil.getLogger(WxServlet.class.getName());
 
+	private IWeiXinService iWeixinService;
+
+	@Override
+	public void init() throws ServletException {
+		super.init();
+		iWeixinService = (IWeiXinService) ServerBeanFactory.getBean("weixinService");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+		// String xml =
+		//<xml>
+		//	<ToUserName><![CDATA[gh_649e8c686a80]]></ToUserName>
+		//	<FromUserName><![CDATA[o1PuujpRyno87Ja2YaPWCBpRbE0c]]></FromUserName>
+		//	<CreateTime>1376371547</CreateTime>
+		//	<MsgType><![CDATA[text]]></MsgType>
+		//	<Content><![CDATA[哈哈哈哈哈]]></Content>
+		//	<MsgId>5911470781509926936</MsgId>
+		//</xml>";
+		// Document msgdoc = DocumentHelper.parseText(xml);
+		try {
+			Map<String, String> map = parseXml(request);
+			List<WeiXinListener> weiXinListeners = iWeixinService.getAllWeiXinListeners();
+			for (WeiXinListener weiXinListener : weiXinListeners) {
+				try {
+					if (weiXinListener.isValid(map)) {
+						weiXinListener.onMessage(map,response);
+					}
+				} catch (Exception ex) {
+					logger.error("", ex);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("", e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		/**
-		 * 接收微信服务器发送请求时传递过来的4个参数
-		 */
 		String signature = request.getParameter("signature");// 微信加密签名signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
 		String timestamp = request.getParameter("timestamp");// 时间戳
 		String nonce = request.getParameter("nonce");// 随机数
@@ -50,83 +100,6 @@ public class WxServlet extends HttpServlet {
 			return;
 		}
 
-		logger.info("接收到微信消息...");
-		BufferedReader br = new BufferedReader(new InputStreamReader(request.getInputStream(), "utf-8"));
-		String line = null;
-		StringBuilder sb = new StringBuilder();
-		while ((line = br.readLine()) != null) {
-			// line = new String(line.getBytes("utf-8"));
-			sb.append(line);
-		}
-		logger.info("data:" + sb.toString());
-		if (sb.toString().equals("")) {
-			response.getWriter().write("");
-			return;
-		}
-
-		Document msgdoc = null;
-		try {
-			msgdoc = DocumentHelper.parseText(sb.toString());
-		} catch (DocumentException e) {
-			logger.info("" + e);
-			return;
-		}
-		Element root = msgdoc.getRootElement();
-		Element node = root.element("MsgType");
-		String MsgType = node.getTextTrim();
-		node = root.element("ToUserName");// 开发者账号/公众号-----------
-		String toUserName = node.getTextTrim();
-		node = root.element("FromUserName");// 发送者openId
-		// 即：openId
-		String fromUserName = node.getTextTrim();
-		String responseXml = "";
-		if (MsgType != null && MsgType.equals("event")) {
-			node = root.element("Event");
-			// 事件名称
-			String event = node.getTextTrim();
-			String eventkey = root.element("EventKey").getTextTrim();
-			logger.info("MsgType==" + MsgType + "  event=" + event);
-
-			if (WeixinConstants.MSG_SUBSCRIBE.equals(event)) {
-
-			}
-			if (WeixinConstants.KF_CLOSE_SESSION.equals(event)) {
-
-			}
-
-			if (WeixinConstants.MSG_UNSUBSCRIBE.equals(event)) {
-
-			}
-
-			if (event.equalsIgnoreCase("CLICK")) {
-
-			} else if (event.equalsIgnoreCase("VIEW")) {
-
-			}
-		} else if (StringUtils.isEmpty(MsgType) || !"text".equals(MsgType)) {
-			logger.info("不支持的消息类型是：" + MsgType);
-			responseXml = WeiXinUtil.getResponseXml(fromUserName, toUserName, "本系统目前暂不受理文本以外的消息类型！");
-			response.getWriter().write(responseXml);
-			return;
-		} else {
-			node = root.element("CreateTime");
-			String CreateTime = node.getTextTrim();
-			node = root.element("Content");
-			String Content = node.getTextTrim();
-			node = root.element("MsgId");
-			String MsgId = node.getTextTrim();
-			logger.info("content=" + Content);
-			// // 以#开头的是命令行
-			if (Content.startsWith("#")) {
-				logger.info("接收到指令消息..");
-
-			} else {
-				IWeiXinService iWeixinService = (IWeiXinService) ServerBeanFactory.getBean("");
-				responseXml = iWeixinService.intercept(fromUserName, toUserName, Content);
-				logger.info("responseXml==" + responseXml);
-				response.getWriter().write(responseXml);
-			}
-		}
 	}
 
 	private boolean checkSignature(String signature, String timestamp, String nonce, String echostr) {
@@ -149,5 +122,31 @@ public class WxServlet extends HttpServlet {
 			logger.equals("校验失败！");
 		}
 		return false;
+	}
+
+	private static Map<String, String> parseXml(HttpServletRequest request) throws Exception {
+		// 将解析结果存储在HashMap中
+		Map<String, String> map = new HashMap<String, String>();
+		// 从request中取得输入流
+		InputStream inputStream = request.getInputStream();
+		try {
+			// 读取输入流
+			SAXReader reader = new SAXReader();
+			Document document = reader.read(inputStream);
+			// 得到xml根元素
+			Element root = document.getRootElement();
+			// 得到根元素的所有子节点
+			List<Element> elementList = root.elements();
+			// 遍历所有子节点
+			for (Element e : elementList) {
+				map.put(e.getName(), e.getText());
+			}
+			logger.info(map);
+		} finally {
+			inputStream.close();
+			inputStream = null;
+		}
+
+		return map;
 	}
 }

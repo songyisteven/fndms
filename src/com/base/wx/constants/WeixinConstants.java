@@ -15,16 +15,21 @@ public class WeixinConstants {
 	/** 多客服关闭会话 */
 	public static final String KF_CLOSE_SESSION = "kf_close_session";
 	
+	
+	public static final String WX_MSG_ToUserName="ToUserName";
+	public static final String WX_MSG_FromUserName="FromUserName";
+	public static final String WX_MSG_CreateTime="CreateTime";
+	public static final String WX_MSG_MsgType="MsgType";
+	public static final String WX_MSG_Content="Content";
+	public static final String WX_MSG_MSGID="MsgId";
+	
 	public static final Map<String,Map<String,String>> appParams=new ConcurrentHashMap<String,Map<String,String>>();
 	
 	static{
 		Map<String,String> fnds=new HashMap<String,String>();
 		fnds.put("APPid", "12311111");//添加分销系统Appid及AppSecret
 		fnds.put("APPSECRET", "12311111");
-		appParams.put("fnd", fnds);
-		
-		
-		
+		appParams.put("fnd", fnds);	
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import com.base.log.LogUtil;
 import com.base.util.WeiXinUtil;
 import com.base.wx.dao.WxRuleDao;
 import com.base.wx.model.WxRules;
+import com.base.wx.service.def.WeiXinListener;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -22,6 +24,8 @@ import net.sf.json.JSONObject;
 public class WeiXinServiceImpl implements com.base.wx.service.def.IWeiXinService {
 
 	private Logger logger = LogUtil.getLogger(LogUtil.SERVER);
+	
+	private final List<WeiXinListener> weiXinListeners=new CopyOnWriteArrayList<WeiXinListener>();
 
 	@Autowired
 	private WxRuleDao wxRuleDao;
@@ -101,6 +105,22 @@ public class WeiXinServiceImpl implements com.base.wx.service.def.IWeiXinService
 			// return WeiXinUtil.getResponseXml(toUserName, fromUserName, Version.getInstance().getNewProperty("welcome"));
 		}
 		return "";
+	}
+
+	@Override
+	public void addWeiXinListener(WeiXinListener weiXinListener) {
+		weiXinListeners.add(weiXinListener);
+	}
+
+	
+	@Override
+	public void removeWeiXinListener(WeiXinListener weiXinListener) {
+		weiXinListeners.remove(weiXinListener);
+	}
+
+	@Override
+	public List<WeiXinListener> getAllWeiXinListeners() {
+		return new ArrayList<WeiXinListener>(weiXinListeners);
 	}
 
 }

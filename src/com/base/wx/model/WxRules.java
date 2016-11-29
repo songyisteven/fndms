@@ -1,5 +1,10 @@
 package com.base.wx.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
 /**
  * 自动回复规则表，关键字回复
  * 
@@ -7,6 +12,7 @@ package com.base.wx.model;
  * 
  * @hibernate.class dynamic-insert="true" dynamic-update="true" table="wxrules" lazy="false"
  */
+@Entity
 public class WxRules implements java.io.Serializable {
 
 	private static final long serialVersionUID = -7092673204552092242L;
@@ -17,6 +23,8 @@ public class WxRules implements java.io.Serializable {
 	
 	public static final String TEXT = "text";
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
 	/** 所属分销商 code */
