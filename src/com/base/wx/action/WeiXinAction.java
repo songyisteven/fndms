@@ -33,7 +33,6 @@ public class WeiXinAction extends BaseAction {
 	private static final String TOKEN = "Lvze2015";
 	@Autowired
 	private IWeiXinService weiXinService;
-	;
 	
 	
 	/**

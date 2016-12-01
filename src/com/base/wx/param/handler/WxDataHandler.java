@@ -1,4 +1,4 @@
-package com.base.wx.data;
+package com.base.wx.param.handler;
 
 /**
  * 

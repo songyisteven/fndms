@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 
 import com.base.log.LogUtil;
 import com.base.tools.Version;
-import com.base.wx.cache.WxParamCache;
 import com.base.wx.model.WxUser;
 
 import net.sf.json.JSONObject;
@@ -512,19 +511,5 @@ public class WeiXinUtil {
 		}
 	}
 	
-	/**
-	 * 从缓存获取jsapiTicket 
-	 * @return
-	 */
-	public static String getJSApiTicket(String orgCode) {
-		//这里的缓存，应该还要传递一个参数： 分销商CODE
-		return WxParamCache.getInstance().getWxJsParam(orgCode, WxParamCache.JS_TICKET);
-	}
 
-	/**
-	 * 从缓存获取access_token
-	 */
-	public static String getAccessToken(String orgCode){
-		return WxParamCache.getInstance().getWxJsParam(orgCode, WxParamCache.TOKEN);
-	}
 }

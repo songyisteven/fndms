@@ -1,19 +1,19 @@
 /**
  * 
  */
-package com.base.wx.job;
+package com.base.wx.param.job;
 
 import java.util.Date;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import com.base.ServerBeanFactory;
 import com.base.job.SimpleTask;
 import com.base.log.LogUtil;
-import com.base.wx.cache.WxParamCache;
-import com.base.wx.data.WxDataCommands;
-import com.base.wx.data.WxDataHandler;
 import com.base.wx.model.WxParamObj;
+import com.base.wx.param.handler.WxDataHandler;
+import com.base.wx.param.service.def.WxParamService;
 
 /**
  * 
@@ -29,8 +29,9 @@ public class CheckParamJob extends SimpleTask {
 		int deadLine = 7000;//到期更新时间7000秒
 		logger.info(".............................检查各微信公众号的WX参数是否到期.............................");
 		//从WxParamCache里遍历每个参数，与当前时间相差超过7000秒时更新一下。
-//		List<WxParamObj> allParams = WxParamCache.getInstance().getAllParams();
-		Map<String, Map<String, WxParamObj>> fullCache = WxParamCache.getInstance().getFullCache();
+//		List<WxParamObj> allParams = WxParamCache.getInstance().getAllParams();\
+		WxParamService wxParamService=(WxParamService)ServerBeanFactory.getBean("wxParamService");
+		Map<String, Map<String, WxParamObj>> fullCache = wxParamService.getFullCache();
 		if(fullCache.size() == 0){
 			logger.info("暂时没有需要更新的微信参数.....");
 			return null;
@@ -46,7 +47,9 @@ public class CheckParamJob extends SimpleTask {
 				if(System.currentTimeMillis() - wo.getTimestamp().longValue() >= deadLine * 1000){
 					logger.info("------------------参数：" + paras + "已经快到期了，现在从服务器更新。------------------");
 					//超过更新期限了，需要重新获取一遍，并且更新到缓存
-					WxDataHandler handler = WxDataCommands.getInstance().getDataHandler(paras);
+					WxDataHandler handler = wxParamService.getWxDataHandler(paras);
+					if(handler==null)
+						continue;
 					handler.getValueAndUpdate2Cache(orgCode);
 				}else{
 					logger.info("------------------参数：" + paras + "尚未到期，无需从微信服务器更新。------------------");
